@@ -11,15 +11,22 @@ export default function App() {
   const [selectedGig, setSelectedGig] = useState(null)
 
   useEffect(() => {
-    api.get("/api/auth/me").then(res => {
-      setUser(res.data)
-      setLoading(false)
-    })
+    api.get("/api/auth/me")
+      .then(res => {
+        setUser(res.data)
+        setLoading(false)
+      })
+      .catch(() => {
+        setUser(null)
+        setLoading(false)
+      })
   }, [])
 
   if (loading) return <p>Loading...</p>
 
-  if (!user) return <Login setUser={setUser} />
+  if (!user) {
+    return <Login setUser={setUser} />
+  }
 
   return (
     <div>
