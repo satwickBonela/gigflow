@@ -7,17 +7,18 @@ const cookieParser = require("cookie-parser")
 
 const app = express()
 
-// 🔥 CORS MUST BE FIRST
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://ver-git-main-satwickbonelas-projects.vercel.app"
-  ],
-  credentials: true
-}))
+// VERY IMPORTANT: this must be first
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://ver-git-main-satwickbonelas-projects.vercel.app")
+  res.header("Access-Control-Allow-Credentials", "true")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+  if (req.method === "OPTIONS") return res.sendStatus(200)
+  next()
+})
 
-app.use(express.json())
 app.use(cookieParser())
+app.use(express.json())
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
@@ -29,4 +30,4 @@ app.use("/api/auth", require("./routes/auth"))
 app.use("/api/gigs", require("./routes/gigs"))
 app.use("/api/bids", require("./routes/bids"))
 
-app.listen(5000, () => console.log("Backend running on port 5000"))
+app.listen(5000, () => console.log("Backend running"))
