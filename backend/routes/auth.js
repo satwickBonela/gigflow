@@ -3,14 +3,20 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const User = require("../models/User")
 
-const router = express.Router()
+router.get("/me", async (req, res) => {
+  try {
+    const token = req.cookies.token
+    if (!token) return res.json(null)
 
-router.post("/register", async (req,res)=>{
-  const {name,email,password} = req.body
-  const hash = await bcrypt.hash(password,10)
-  const user = await User.create({name,email,password:hash})
-  res.json(user)
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await User.findById(decoded.id).select("-password")
+
+    res.json(user)
+  } catch {
+    res.json(null)
+  }
 })
+
 
 router.post("/login", async (req,res)=>{
   const {email,password} = req.body
