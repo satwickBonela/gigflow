@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
-const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 const User = require("../models/User")
 
 // Register
@@ -10,7 +10,7 @@ router.post("/register", async (req, res) => {
     const { name, email, password } = req.body
 
     const existing = await User.findOne({ email })
-    if (existing) return res.status(400).json("User already exists")
+    if (existing) return res.status(400).json({ message: "User already exists" })
 
     const hash = await bcrypt.hash(password, 10)
 
@@ -22,7 +22,7 @@ router.post("/register", async (req, res) => {
 
     res.json(user)
   } catch (err) {
-    res.status(500).json("Registration failed")
+    res.status(500).json({ message: "Registration failed" })
   }
 })
 
@@ -32,27 +32,29 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
-    if (!user) return res.status(400).json("Invalid email")
+    if (!user) return res.status(400).json({ message: "Invalid email" })
 
     const ok = await bcrypt.compare(password, user.password)
-    if (!ok) return res.status(400).json("Invalid password")
+    if (!ok) return res.status(400).json({ message: "Invalid password" })
 
     const token = jwt.sign(
       { id: user._id },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     )
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax"
+      sameSite: "none",
+      secure: true
     }).json(user)
 
   } catch (err) {
-    res.status(500).json("Login failed")
+    res.status(500).json({ message: "Login failed" })
   }
 })
 
-// Get current user
+// Get current logged-in user
 router.get("/me", async (req, res) => {
   try {
     const token = req.cookies.token
@@ -62,7 +64,7 @@ router.get("/me", async (req, res) => {
     const user = await User.findById(decoded.id).select("-password")
 
     res.json(user)
-  } catch {
+  } catch (err) {
     res.json(null)
   }
 })
