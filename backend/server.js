@@ -2,12 +2,11 @@ require("dotenv").config()
 
 const express = require("express")
 const mongoose = require("mongoose")
-const cors = require("cors")
 const cookieParser = require("cookie-parser")
 
 const app = express()
 
-// VERY IMPORTANT: this must be first
+// 🔥 MANUAL CORS (ONLY THIS)
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://ver-git-main-satwickbonelas-projects.vercel.app")
   res.header("Access-Control-Allow-Credentials", "true")
