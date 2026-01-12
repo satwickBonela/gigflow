@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log("Mongo Error:", err))
 
 app.use(cors({
-  origin:"https://gigflow.vercel.app",
+  origin:"https://ver-git-main-satwickbonelas-projects.vercel.app",
   credentials: true
 }))
 
