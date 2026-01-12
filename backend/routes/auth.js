@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const User = require("../models/User")
 
-// Register
+// REGISTER
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body
@@ -26,7 +26,7 @@ router.post("/register", async (req, res) => {
   }
 })
 
-// Login
+// LOGIN
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body
@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
   }
 })
 
-// Get current logged-in user
+// CURRENT USER
 router.get("/me", async (req, res) => {
   try {
     const token = req.cookies.token
